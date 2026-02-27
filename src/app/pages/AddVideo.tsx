@@ -18,7 +18,9 @@ export function AddVideo() {
     category: "",
     tags: "",
   });
-  const [urlType, setUrlType] = useState<"youtube" | "other">("youtube");
+  const [uploadType, setUploadType] = useState<"file" | "youtube" | "other">("file");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
 
   const categories = [
@@ -37,24 +39,30 @@ export function AddVideo() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate YouTube URL if selected
-    if (urlType === "youtube" && !isValidYouTubeUrl(formData.videoUrl)) {
+    // Validate based on upload type
+    if (uploadType === "youtube" && !isValidYouTubeUrl(formData.videoUrl)) {
       alert("Please enter a valid YouTube URL");
       return;
     }
 
-    // In a real app, this would send to backend
-    console.log("Submitting video:", formData);
-    
-    // Store in localStorage for demo
+    if (uploadType === "file" && !videoFile) {
+      alert("Please select a video file to upload");
+      return;
+    }
+
+    // Store in localStorage for demo (in real app, upload file to server)
     const existingVideos = JSON.parse(localStorage.getItem("userVideos") || "[]");
     const newVideo = {
       id: Date.now().toString(),
       ...formData,
-      uploadedBy: "Current User", // Would be actual user name
+      uploadType,
+      videoUrl: uploadType === "file" ? videoPreview : formData.videoUrl,
+      uploadedBy: "Current User",
       uploadedAt: new Date().toISOString(),
+      duration: "0:00",
       views: 0,
       likes: 0,
+      thumbnail: uploadType === "file" ? videoPreview : "",
     };
     localStorage.setItem("userVideos", JSON.stringify([...existingVideos, newVideo]));
     
@@ -127,24 +135,33 @@ export function AddVideo() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Video URL Type */}
+                  {/* Video Upload Type */}
                   <div className="space-y-2">
                     <Label>Video Source</Label>
                     <div className="flex gap-3">
                       <Button
                         type="button"
-                        variant={urlType === "youtube" ? "default" : "outline"}
-                        className={urlType === "youtube" ? "bg-red-600 hover:bg-red-700" : ""}
-                        onClick={() => setUrlType("youtube")}
+                        variant={uploadType === "file" ? "default" : "outline"}
+                        className={uploadType === "file" ? "bg-red-600 hover:bg-red-700" : ""}
+                        onClick={() => setUploadType("file")}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload File
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={uploadType === "youtube" ? "default" : "outline"}
+                        className={uploadType === "youtube" ? "bg-red-600 hover:bg-red-700" : ""}
+                        onClick={() => setUploadType("youtube")}
                       >
                         <Youtube className="w-4 h-4 mr-2" />
                         YouTube
                       </Button>
                       <Button
                         type="button"
-                        variant={urlType === "other" ? "default" : "outline"}
-                        className={urlType === "other" ? "bg-blue-600 hover:bg-blue-700" : ""}
-                        onClick={() => setUrlType("other")}
+                        variant={uploadType === "other" ? "default" : "outline"}
+                        className={uploadType === "other" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                        onClick={() => setUploadType("other")}
                       >
                         <LinkIcon className="w-4 h-4 mr-2" />
                         Other URL
@@ -152,33 +169,68 @@ export function AddVideo() {
                     </div>
                   </div>
 
+                  {/* Video File Upload */}
+                  {uploadType === "file" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="videoFile">
+                        Upload Video File <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="videoFile"
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setVideoFile(file);
+                            setVideoPreview(URL.createObjectURL(file));
+                          }
+                        }}
+                        required
+                        className="border-green-300"
+                      />
+                      {videoPreview && (
+                        <div className="bg-gray-100 rounded-lg overflow-hidden">
+                          <video
+                            width="100%"
+                            height="315"
+                            src={videoPreview}
+                            controls
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Video URL */}
-                  <div className="space-y-2">
-                    <Label htmlFor="videoUrl">
-                      Video URL <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="videoUrl"
-                      type="url"
-                      placeholder={
-                        urlType === "youtube"
-                          ? "https://www.youtube.com/watch?v=..."
-                          : "https://vimeo.com/... or any video URL"
-                      }
-                      value={formData.videoUrl}
-                      onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                      required
-                      className="border-green-300"
-                    />
-                    {urlType === "youtube" && (
-                      <p className="text-xs text-gray-500">
-                        Paste the full YouTube video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-                      </p>
-                    )}
-                  </div>
+                  {uploadType !== "file" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="videoUrl">
+                        Video URL <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="videoUrl"
+                        type="url"
+                        placeholder={
+                          uploadType === "youtube"
+                            ? "https://www.youtube.com/watch?v=..."
+                            : "https://vimeo.com/... or any video URL"
+                        }
+                        value={formData.videoUrl}
+                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                        required
+                        className="border-green-300"
+                      />
+                      {uploadType === "youtube" && (
+                        <p className="text-xs text-gray-500">
+                          Paste the full YouTube video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Video Preview */}
-                  {formData.videoUrl && urlType === "youtube" && isValidYouTubeUrl(formData.videoUrl) && (
+                  {formData.videoUrl && uploadType === "youtube" && isValidYouTubeUrl(formData.videoUrl) && (
                     <div className="bg-gray-100 rounded-lg overflow-hidden">
                       <iframe
                         width="100%"

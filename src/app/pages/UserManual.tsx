@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { PlayCircle, Search, Clock, BookOpen, Upload, Users, Eye, ThumbsUp, Trash2 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { VideoPlayer } from "../components/VideoPlayer";
 
 const videoCategories = [
   { id: "all", name: "All Videos" },
@@ -30,8 +31,11 @@ const officialVideos = [
     category: "Hardware Setup",
     duration: "12:34",
     thumbnail: "https://images.unsplash.com/photo-1738598665806-7ecc32c3594c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMHNlbnNvciUyMGluc3RhbGxhdGlvbiUyMHR1dG9yaWFsfGVufDF8fHx8MTc3MjIxNDQzNHww&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Learn how to install and configure your NPK soil sensor for optimal performance. This comprehensive guide covers everything from unboxing to calibration.",
     views: 2400,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
   {
@@ -40,8 +44,11 @@ const officialVideos = [
     category: "IoT Device Installation",
     duration: "15:22",
     thumbnail: "https://images.unsplash.com/photo-1738598665698-7fd7af4b5e0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXJtaW5nJTIwaXJyaWdhdGlvbiUyMHN5c3RlbSUyMHNldHVwfGVufDF8fHx8MTc3MjIxNDQzOHww&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Step-by-step tutorial on setting up your smart irrigation system with ESP32 microcontroller.",
     views: 3100,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
   {
@@ -50,8 +57,11 @@ const officialVideos = [
     category: "Software Tutorial",
     duration: "8:45",
     thumbnail: "https://images.unsplash.com/photo-1744230673231-865d54a0aba4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydHBob25lJTIwYWdyaWN1bHR1cmUlMjBhcHAlMjB1c2FnZXxlbnwxfHx8fDE3NzIyMTQ0NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Complete walkthrough of the AgriVerse dashboard and all its features.",
     views: 1800,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
   {
@@ -60,8 +70,11 @@ const officialVideos = [
     category: "Nutrient Management",
     duration: "18:56",
     thumbnail: "https://images.unsplash.com/photo-1680724525083-5c2c734f9a3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmVlbmhvdXNlJTIwZmFybWluZyUyMHRlY2hub2xvZ3l8ZW58MXx8fHwxNzcyMjE0NDQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Learn about optimal NPK ratios for various crops and how to maintain proper nutrient balance.",
     views: 4200,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
   {
@@ -70,8 +83,11 @@ const officialVideos = [
     category: "Sensor Calibration",
     duration: "10:30",
     thumbnail: "https://images.unsplash.com/photo-1759967448986-29274948919a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBmYXJtaW5nJTIwZXF1aXBtZW50fGVufDF8fHx8MTc3MjIxNDQ1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Proper calibration techniques for moisture sensors to ensure accurate readings.",
     views: 1900,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
   {
@@ -80,8 +96,11 @@ const officialVideos = [
     category: "Troubleshooting",
     duration: "14:05",
     thumbnail: "https://images.unsplash.com/photo-1738598665806-7ecc32c3594c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMHNlbnNvciUyMGluc3RhbGxhdGlvbiUyMHR1dG9yaWFsfGVufDF8fHx8MTc3MjIxNDQzNHww&ixlib=rb-4.1.0&q=80&w=1080",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    description: "Common sensor problems and how to fix them quickly.",
     views: 1500,
     uploadedBy: "AgriVerse Team",
+    uploadType: "youtube",
     official: true,
   },
 ];
@@ -92,6 +111,7 @@ export function UserManual() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [communityVideos, setCommunityVideos] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
 
   useEffect(() => {
     // Load community videos from localStorage
@@ -120,7 +140,10 @@ export function UserManual() {
   const filteredCommunityVideos = getFilteredVideos(communityVideos);
 
   const VideoCard = ({ video, showDelete = false }: { video: any; showDelete?: boolean }) => (
-    <Card className="cursor-pointer hover:shadow-xl transition-all border-green-200 overflow-hidden group">
+    <Card 
+      className="cursor-pointer hover:shadow-xl transition-all border-green-200 overflow-hidden group"
+      onClick={() => setSelectedVideo(video)}
+    >
       <div className="relative aspect-video overflow-hidden bg-gray-200">
         <ImageWithFallback
           src={video.thumbnail || "https://images.unsplash.com/photo-1680724525083-5c2c734f9a3c?w=400"}
@@ -323,6 +346,14 @@ export function UserManual() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Video Player Modal */}
+      {selectedVideo && (
+        <VideoPlayer
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+        />
+      )}
     </div>
   );
 }

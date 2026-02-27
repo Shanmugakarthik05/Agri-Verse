@@ -1,5 +1,9 @@
 import { createBrowserRouter } from "react-router";
+import { Splash } from "./pages/Splash";
 import { Login } from "./pages/Login";
+import { OTPVerification } from "./pages/OTPVerification";
+import { Register } from "./pages/Register";
+import { RegistrationSuccess } from "./pages/RegistrationSuccess";
 import { Dashboard } from "./pages/Dashboard";
 import { SmartIrrigation } from "./pages/SmartIrrigation";
 import { NutrientManagement } from "./pages/NutrientManagement";
@@ -22,7 +26,23 @@ import { MainLayout } from "./components/MainLayout";
 export const router = createBrowserRouter([
   {
     path: "/",
+    Component: Splash,
+  },
+  {
+    path: "/login",
     Component: Login,
+  },
+  {
+    path: "/otp-verification",
+    Component: OTPVerification,
+  },
+  {
+    path: "/register",
+    Component: Register,
+  },
+  {
+    path: "/registration-success",
+    Component: RegistrationSuccess,
   },
   {
     path: "/app",

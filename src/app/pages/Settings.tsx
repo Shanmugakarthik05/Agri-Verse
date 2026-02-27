@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -17,11 +18,50 @@ import {
   Save,
   Mail,
   Phone,
+  Languages,
+  Check,
 } from "lucide-react";
 
 export function Settings() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  // Get current language from i18n
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'english');
+
+  // Available languages
+  const LANGUAGES = [
+    { value: "english", label: "English", nativeName: "English", flag: "🇬🇧" },
+    { value: "hindi", label: "Hindi", nativeName: "हिंदी", flag: "🇮🇳" },
+    { value: "bengali", label: "Bengali", nativeName: "বাংলা", flag: "🇧🇩" },
+    { value: "telugu", label: "Telugu", nativeName: "తెలుగు", flag: "🇮🇳" },
+    { value: "marathi", label: "Marathi", nativeName: "मराठी", flag: "🇮🇳" },
+    { value: "tamil", label: "Tamil", nativeName: "தமிழ்", flag: "🇮🇳" },
+    { value: "gujarati", label: "Gujarati", nativeName: "ગુજરાતી", flag: "🇮🇳" },
+    { value: "kannada", label: "Kannada", nativeName: "ಕನ್ನಡ", flag: "🇮🇳" },
+    { value: "malayalam", label: "Malayalam", nativeName: "മലയാളം", flag: "🇮🇳" },
+    { value: "punjabi", label: "Punjabi", nativeName: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
+    { value: "odia", label: "Odia", nativeName: "ଓଡ଼ିଆ", flag: "🇮🇳" },
+    { value: "assamese", label: "Assamese", nativeName: "অসমীয়া", flag: "🇮🇳" },
+  ];
+
+  const handleLanguageChange = (lang: string) => {
+    setSelectedLanguage(lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem('agriverse_language', lang);
+    
+    // Update user profile with new language
+    const savedUser = localStorage.getItem('agriverse_user');
+    if (savedUser) {
+      const userData = JSON.parse(savedUser);
+      userData.language = lang;
+      localStorage.setItem('agriverse_user', JSON.stringify(userData));
+    }
+    
+    alert('Language changed successfully! The app will now display in your selected language.');
+    setActiveSection(null);
+  };
 
   // Farm Profile State
   const [farmProfile, setFarmProfile] = useState({
@@ -65,6 +105,13 @@ export function Settings() {
       icon: User,
       description: "Update your personal information",
       color: "from-blue-500 to-cyan-600",
+    },
+    {
+      id: "language",
+      title: "Language Preferences",
+      icon: Languages,
+      description: "Choose your preferred language",
+      color: "from-indigo-500 to-purple-600",
     },
     {
       id: "notifications",
@@ -113,10 +160,10 @@ export function Settings() {
             onClick={() => navigate("/app")}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
+            {t('settings.back_to_dashboard')}
           </Button>
-          <h1 className="text-3xl font-bold text-green-800 mb-2">Settings</h1>
-          <p className="text-gray-600">Manage your farm profile and app preferences</p>
+          <h1 className="text-3xl font-bold text-green-800 mb-2">{t('settings.title')}</h1>
+          <p className="text-gray-600">{t('settings.subtitle')}</p>
         </div>
 
         {!activeSection ? (
@@ -292,6 +339,66 @@ export function Settings() {
                     <Save className="w-4 h-4 mr-2" />
                     Save Changes
                   </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Language Preferences Section */}
+            {activeSection === "language" && (
+              <Card className="border-green-200 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-800">
+                    <Languages className="w-5 h-5" />
+                    Language Preferences
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Choose your preferred language for the app interface and notifications. All content will be displayed in your selected language.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <Languages className="w-5 h-5 text-indigo-600" />
+                      <p className="text-sm text-indigo-800">
+                        Current Language: <span className="font-semibold">{LANGUAGES.find(l => l.value === selectedLanguage)?.label}</span> ({LANGUAGES.find(l => l.value === selectedLanguage)?.nativeName})
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {LANGUAGES.map((lang) => (
+                      <button
+                        key={lang.value}
+                        onClick={() => handleLanguageChange(lang.value)}
+                        className={`p-4 border-2 rounded-xl text-left transition-all hover:shadow-lg ${
+                          selectedLanguage === lang.value
+                            ? "border-indigo-600 bg-indigo-50 shadow-md"
+                            : "border-gray-300 bg-white hover:border-indigo-300"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-3xl">{lang.flag}</span>
+                            <div>
+                              <h3 className="font-semibold text-gray-800">{lang.label}</h3>
+                              <p className="text-sm text-gray-600">{lang.nativeName}</p>
+                            </div>
+                          </div>
+                          {selectedLanguage === lang.value && (
+                            <div className="w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <p className="text-xs text-gray-500 text-center">
+                      💡 Tip: You can change your language preference anytime from Settings
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}
